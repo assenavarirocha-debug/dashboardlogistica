@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · BL · Março 2023</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f0f4f8;--white:#ffffff;--s1:#f8fafc;--b1:#e2e8f0;--b2:#cbd5e1;
+  --navy:#0f2147;--navy2:#1a3a6e;--navy3:#1e4080;
+  --blue:#1d6fea;--blue2:#2563eb;--blue3:#3b82f6;--blue-lt:#eff6ff;--blue-lt2:#dbeafe;
+  --sky:#0ea5e9;--teal:#0d9488;--green:#059669;--amber:#d97706;
+  --red:#dc2626;--orange:#ea580c;--purple:#7c3aed;
+  --txt:#0f172a;--txt2:#334155;--txt3:#64748b;--txt4:#94a3b8;
+  --r:10px;
+  --shadow:0 1px 3px rgba(15,33,71,.08),0 4px 16px rgba(15,33,71,.06);
+  --shadow-md:0 4px 12px rgba(15,33,71,.12),0 8px 28px rgba(15,33,71,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;height:58px;
+  background:var(--navy);display:flex;align-items:center;padding:0 28px;
+  box-shadow:0 2px 16px rgba(15,33,71,.25);
+}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{
+  width:34px;height:34px;background:var(--blue);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora';font-weight:800;font-size:13px;color:#fff;letter-spacing:.5px;
+}
+.tb-title{font-family:'Sora';font-weight:700;font-size:15px;color:#fff;letter-spacing:.3px}
+.tb-title span{color:#93c5fd}
+.tb-divider{width:1px;height:24px;background:rgba(255,255,255,.15);margin:0 20px}
+.tb-sub{font-size:12px;color:#93c5fd;font-family:'JetBrains Mono';letter-spacing:.5px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tb-badge{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid;letter-spacing:.3px}
+.tbb-white{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#e2e8f0}
+.tbb-blue{background:rgba(29,111,234,.2);border-color:rgba(29,111,234,.5);color:#93c5fd}
+.tbb-green{background:rgba(5,150,105,.2);border-color:rgba(5,150,105,.4);color:#6ee7b7}
+.tbb-amber{background:rgba(217,119,6,.2);border-color:rgba(217,119,6,.4);color:#fcd34d}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;left:0;top:58px;bottom:0;width:224px;
+  background:var(--navy2);overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;box-shadow:2px 0 12px rgba(15,33,71,.15);
+}
+.sb-section{padding:16px 12px 8px;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(147,197,253,.5);font-family:'JetBrains Mono'}
+.sb-btn{
+  display:flex;align-items:center;gap:10px;padding:9px 16px;margin:1px 8px;
+  border-radius:7px;font-size:13px;font-weight:500;color:rgba(226,232,240,.7);
+  cursor:pointer;transition:.15s;border:none;background:transparent;text-align:left;width:calc(100% - 16px);
+}
+.sb-btn:hover{background:rgba(255,255,255,.07);color:#e2e8f0}
+.sb-btn.active{background:rgba(29,111,234,.3);color:#93c5fd;border-left:3px solid var(--blue3)}
+.sb-btn .sb-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.sb-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 16px}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-author{font-size:11px;color:rgba(147,197,253,.6);line-height:1.8}
+.sb-author strong{color:#93c5fd;display:block;font-size:12px;margin-bottom:2px}
+
+/* ── MAIN ── */
+.main{margin-left:224px;padding-top:58px;min-height:100vh}
+.page{display:none;padding:24px 28px 48px;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PAGE HEADER ── */
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--b1)}
+.ph-tag{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue2);font-family:'JetBrains Mono';margin-bottom:4px}
+.ph-title{font-family:'Sora';font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+.ph-sub{font-size:12px;color:var(--txt3);margin-top:3px}
+.ph-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ── CHIPS ── */
+.chip{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid;letter-spacing:.2px;white-space:nowrap}
+.chip-blue{background:var(--blue-lt);border-color:var(--blue-lt2);color:var(--blue2)}
+.chip-green{background:#ecfdf5;border-color:#a7f3d0;color:var(--green)}
+.chip-red{background:#fef2f2;border-color:#fecaca;color:var(--red)}
+.chip-amber{background:#fffbeb;border-color:#fde68a;color:var(--amber)}
+.chip-navy{background:var(--navy);color:#93c5fd;border-color:var(--navy2)}
+.chip-purple{background:#f5f3ff;border-color:#ddd6fe;color:var(--purple)}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--b1);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.card-hdr{padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.card-body{padding:14px 20px 20px}
+.card-title{font-size:11px;font-weight:600;color:var(--navy);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.card-title-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.card-action{font-size:11px;color:var(--txt3);font-family:'JetBrains Mono'}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.kpi-strip-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:var(--white);border:1px solid var(--b1);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;position:relative;overflow:hidden;transition:.2s}
+.kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--blue))}
+.kpi-icon{position:absolute;bottom:10px;right:14px;font-size:30px;opacity:.07}
+.kpi-tag{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px;font-weight:600}
+.kpi-num{font-family:'Sora';font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.5px;line-height:1}
+.kpi-sub{font-size:11px;color:var(--txt3);margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.d-good{background:#dcfce7;color:#15803d}
+.d-bad{background:#fee2e2;color:var(--red)}
+.d-warn{background:#fef9c3;color:#854d0e}
+.d-info{background:var(--blue-lt);color:var(--blue2)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.g31{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+.g13{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px}
+.g211{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.mb16{margin-bottom:16px}
+.span2{grid-column:span 2}
+
+/* ── CHART SIZES ── */
+.ch180{height:180px;position:relative}
+.ch220{height:220px;position:relative}
+.ch260{height:260px;position:relative}
+.ch300{height:300px;position:relative}
+.ch340{height:340px;position:relative}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;max-height:400px;overflow-y:auto}
+.tbl-wrap::-webkit-scrollbar{width:4px;height:4px}
+.tbl-wrap::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl thead{position:sticky;top:0;background:var(--s1);z-index:2}
+.tbl th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);padding:9px 12px;border-bottom:2px solid var(--b1);text-align:left;font-weight:600;white-space:nowrap}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--b1);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--blue-lt)}
+
+/* ── PLATE ── */
+.plate{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--navy);color:#e2e8f0;border-radius:5px;font-family:'JetBrains Mono';font-size:11.5px;font-weight:600;letter-spacing:.5px}
+.plate-dot{width:5px;height:5px;border-radius:50%;background:var(--blue3);flex-shrink:0}
+
+/* ── MINI BAR ── */
+.mbar{display:flex;align-items:center;gap:6px}
+.mbar-bg{flex:1;height:5px;background:var(--b1);border-radius:3px;overflow:hidden}
+.mbar-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+/* ── CATEGORY BAR ── */
+.cat-row{display:flex;flex-direction:column;gap:11px}
+.cat-item{}
+.cat-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px}
+.cat-hdr-l{font-weight:500;color:var(--txt2)}
+.cat-hdr-r{font-family:'JetBrains Mono';font-size:11px;color:var(--txt3)}
+.cat-track{height:8px;background:var(--b1);border-radius:4px;overflow:hidden}
+.cat-fill{height:100%;border-radius:4px}
+
+/* ── KML GAUGE ── */
+.gauge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.gauge-cell{background:var(--s1);border:1px solid var(--b1);border-radius:8px;padding:12px 8px;text-align:center}
+.g-id{font-family:'JetBrains Mono';font-size:9px;color:var(--txt3);margin-bottom:5px;letter-spacing:.5px}
+.g-num{font-family:'Sora';font-size:22px;font-weight:800;line-height:1}
+.g-unit{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-top:2px;text-transform:uppercase}
+.g-bar{height:3px;background:var(--b1);border-radius:2px;margin-top:7px;overflow:hidden}
+.g-bar-fill{height:100%;border-radius:2px}
+
+/* ── ALERT ── */
+.alert-list{display:flex;flex-direction:column;gap:10px}
+.alert-item{display:flex;gap:12px;padding:13px 15px;border-radius:8px;border-left:4px solid}
+.alert-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.alert-desc{font-size:12px;line-height:1.5}
+.a-critical{background:#fef2f2;border-color:var(--red)}
+.a-critical .alert-title{color:var(--red)}.a-critical .alert-desc{color:var(--txt3)}
+.a-warn{background:#fffbeb;border-color:var(--amber)}
+.a-warn .alert-title{color:var(--amber)}.a-warn .alert-desc{color:var(--txt3)}
+.a-info{background:var(--blue-lt);border-color:var(--blue2)}
+.a-info .alert-title{color:var(--navy)}.a-info .alert-desc{color:var(--txt3)}
+.a-ok{background:#ecfdf5;border-color:var(--green)}
+.a-ok .alert-title{color:var(--green)}.a-ok .alert-desc{color:var(--txt3)}
+
+/* ── RANK ── */
+.rank-list{display:flex;flex-direction:column;gap:7px}
+.rank-item{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--s1);border:1px solid var(--b1);border-radius:8px;transition:.15s}
+.rank-item:hover{background:var(--blue-lt);border-color:var(--blue-lt2)}
+.rank-n{font-family:'Sora';font-size:18px;font-weight:800;width:22px;text-align:center;color:var(--txt4)}
+.rank-n.r1{color:#f59e0b}.rank-n.r2{color:#94a3b8}.rank-n.r3{color:#b45309}
+.rank-body{flex:1}
+.rank-name{font-size:12.5px;font-weight:600;color:var(--navy)}
+.rank-sub{font-size:11px;color:var(--txt3)}
+.rank-val{font-family:'JetBrains Mono';font-size:13px;font-weight:600}
+
+/* ── META ── */
+.meta-list{display:flex;flex-direction:column;gap:15px}
+.meta-hdr{display:flex;justify-content:space-between;margin-bottom:7px;font-size:12.5px}
+.meta-label{font-weight:500;color:var(--txt2)}
+.meta-vals{font-family:'JetBrains Mono';font-size:11px;color:var(--txt3)}
+.meta-track{height:10px;background:var(--b1);border-radius:5px;overflow:hidden}
+.meta-fill{height:100%;border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.meta-note{font-size:11px;margin-top:4px;font-weight:500}
+
+/* ── STAT BOX ── */
+.stat-box{border-radius:var(--r);padding:20px;text-align:center}
+.stat-num{font-family:'Sora';font-size:30px;font-weight:800;line-height:1}
+.stat-lbl{font-size:11px;margin-top:5px}
+
+/* ── DIVIDER ── */
+hr.light{border:none;border-top:1px solid var(--b1);margin:14px 0}
+
+/* ── FOOTER ── */
+.footer{margin-left:224px;padding:14px 28px;border-top:2px solid var(--b1);background:var(--white);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--txt3)}
+.footer strong{color:var(--navy)}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap}
+.ftag{padding:3px 10px;border:1px solid var(--b2);border-radius:20px;font-size:10px;color:var(--txt3);background:var(--s1)}
+
+/* ── SCROLL ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.kpi:nth-child(1){animation:fadeIn .3s .04s both}
+.kpi:nth-child(2){animation:fadeIn .3s .09s both}
+.kpi:nth-child(3){animation:fadeIn .3s .14s both}
+.kpi:nth-child(4){animation:fadeIn .3s .19s both}
+.kpi:nth-child(5){animation:fadeIn .3s .24s both}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">BL</div>
+    <div class="tb-title">BL</div>
+  </div>
+  <div class="tb-divider"></div>
+  <div class="tb-sub">CONTROLE DE TRANSPORTES · MARÇO / 2023</div>
+  <div class="tb-right">
+    <span class="tb-badge tbb-white">📅 Mar/2023</span>
+    <span class="tb-badge tbb-blue">🚛 22 Veículos</span>
+    <span class="tb-badge tbb-amber">✍️ Vanessa Santana</span>
+    <span class="tb-badge tbb-green">✓ Portfólio</span>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-section">Principal</div>
+  <button class="sb-btn active" onclick="goPage('overview',this)"><span class="sb-icon">📊</span>Visão Geral</button>
+  <button class="sb-btn" onclick="goPage('frota',this)"><span class="sb-icon">🚛</span>Frota & Custos</button>
+  <button class="sb-btn" onclick="goPage('combustivel',this)"><span class="sb-icon">⛽</span>Combustível & KM/L</button>
+  <button class="sb-btn" onclick="goPage('manutencao',this)"><span class="sb-icon">🔧</span>Manutenção</button>
+  <div class="sb-divider"></div>
+  <div class="sb-section">Análise</div>
+  <button class="sb-btn" onclick="goPage('ranking',this)"><span class="sb-icon">🏆</span>Ranking de Veículos</button>
+  <button class="sb-btn" onclick="goPage('motoristas',this)"><span class="sb-icon">👤</span>Análise por Motorista</button>
+  <button class="sb-btn" onclick="goPage('comparativo',this)"><span class="sb-icon">📈</span>Comparativo 2022/2023</button>
+  <button class="sb-btn" onclick="goPage('metas',this)"><span class="sb-icon">🎯</span>Metas & Orçamento</button>
+  <button class="sb-btn" onclick="goPage('alertas',this)"><span class="sb-icon">💡</span>Insights & Oportunidades</button>
+  <div class="sb-divider"></div>
+  <div class="sb-section">Ações</div>
+  <button class="sb-btn" onclick="window.print()"><span class="sb-icon">🖨️</span>Imprimir</button>
+  <div class="sb-footer">
+    <div class="sb-author">
+      <strong>✍️ Vanessa Santana</strong>
+      Analista de Logística<br>
+      BL · Mar/2023<br>
+      Portfólio Profissional
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ═══ PAGE: VISÃO GERAL ═══ -->
+<section class="page active" id="page-overview">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Dashboard Principal · BL</div>
+      <div class="ph-title">Visão Geral Executiva</div>
+      <div class="ph-sub">Disponib. frota 95,2% · Custo/km ▼17,2% · Pedágio/km ▼9,3% · Preventiva reestruturada · Março 2023 · Elaborado por Vanessa Santana</div>
+    </div>
+    <div class="ph-right">
+      <span class="chip chip-navy">Mar/2023</span>
+      <span class="chip chip-green">▲ +2 veículos na frota</span>
+      <span class="chip chip-purple">22 Veículos</span>
+    </div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi" style="--kc:var(--green)">
+      <div class="kpi-tag">Custo Combust. / KM</div>
+      <div class="kpi-num">R$ 2,02/km</div>
+      <div class="kpi-sub"><span class="delta d-good">▼ 17,2%</span> vs R$2,44/km em 2022</div>
+      <div class="kpi-icon">⛽</div>
+    </div>
+    <div class="kpi" style="--kc:var(--green)">
+      <div class="kpi-tag">KM Rodados</div>
+      <div class="kpi-num">87.428 km</div>
+      <div class="kpi-sub"><span class="delta d-good">▲ 22%</span> mais entregas vs 2022</div>
+      <div class="kpi-icon">📍</div>
+    </div>
+    <div class="kpi" style="--kc:var(--blue)">
+      <div class="kpi-tag">Manut. / Veículo*</div>
+      <div class="kpi-num">R$ 3.588</div>
+      <div class="kpi-sub"><span class="delta d-info">*excl. revisão geral XMB</span></div>
+      <div class="kpi-icon">🔧</div>
+    </div>
+    <div class="kpi" style="--kc:var(--teal)">
+      <div class="kpi-tag">Disponib. de Frota</div>
+      <div class="kpi-num">95,2%</div>
+      <div class="kpi-sub"><span class="delta d-good">Preventiva reestruturada</span> Mar/2023</div>
+      <div class="kpi-icon">🚛</div>
+    </div>
+    <div class="kpi" style="--kc:var(--amber)">
+      <div class="kpi-tag">Projeção Economia</div>
+      <div class="kpi-num">R$ 28K/mês</div>
+      <div class="kpi-sub"><span class="delta d-good">Pós-preventiva</span> abr–jun/23</div>
+      <div class="kpi-icon">📈</div>
+    </div>
+  </div>
+
+  <div class="g31">
+    <div class="card mb16">
+      <div class="card-hdr">
+        <div class="card-title"><div class="card-title-dot"></div>Evolução Semestral por Categoria (R$)</div>
+        <div class="card-action">Out/22 → Mar/23</div>
+      </div>
+      <div class="card-body"><div class="ch260"><canvas id="c_sem_line"></canvas></div></div>
+    </div>
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Composição dos Custos</div></div>
+      <div class="card-body">
+        <div class="ch160" style="height:160px;position:relative"><canvas id="c_donut"></canvas></div>
+        <hr class="light">
+        <div class="cat-row">
+          <div class="cat-item">
+            <div class="cat-hdr"><span class="cat-hdr-l">⛽ Abastecimento</span><span class="cat-hdr-r">48,8% · R$ 176.868</span></div>
+            <div class="cat-track"><div class="cat-fill" style="width:48.8%;background:var(--blue)"></div></div>
+          </div>
+          <div class="cat-item">
+            <div class="cat-hdr"><span class="cat-hdr-l">🔧 Manutenção</span><span class="cat-hdr-r">32,1% · R$ 116.085</span></div>
+            <div class="cat-track"><div class="cat-fill" style="width:32.1%;background:var(--red)"></div></div>
+          </div>
+          <div class="cat-item">
+            <div class="cat-hdr"><span class="cat-hdr-l">📋 Despesas Gerais</span><span class="cat-hdr-r">12,4% · R$ 44.808</span></div>
+            <div class="cat-track"><div class="cat-fill" style="width:12.4%;background:var(--teal)"></div></div>
+          </div>
+          <div class="cat-item">
+            <div class="cat-hdr"><span class="cat-hdr-l">📦 Descarga</span><span class="cat-hdr-r">1,4% · R$ 5.232</span></div>
+            <div class="cat-track"><div class="cat-fill" style="width:1.4%;background:var(--green)"></div></div>
+          </div>
+          <div class="cat-item">
+            <div class="cat-hdr"><span class="cat-hdr-l">🛣️ Pedágio + SASCAR</span><span class="cat-hdr-r">5,0% · R$ 18.136</span></div>
+            <div class="cat-track"><div class="cat-fill" style="width:5%;background:var(--purple)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Custo Total por Veículo (Rank Dec.)</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_bar_veic"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Top 8 — Composição Empilhada</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_stack_top"></canvas></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: FROTA ═══ -->
+<section class="page" id="page-frota">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Operacional</div>
+      <div class="ph-title">Frota & Custos Detalhados</div>
+      <div class="ph-sub">22 veículos · Despesas, abastecimento, manutenção e descarga · Março/2023</div>
+    </div>
+    <div class="ph-right"><span class="chip chip-blue">22 Veículos Ativos</span></div>
+  </div>
+
+  <div class="g31 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Composição Empilhada — Todos os Veículos</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_stack_all"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Distribuição % Custo Total</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_polar"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Tabela Completa — Todos os Veículos</div><div class="card-action">22 registros</div></div>
+    <div class="card-body" style="padding-top:10px">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>#</th><th>Placa</th><th>Despesas</th><th>Descarga</th>
+            <th>Abastecimento</th><th>Manutenção</th><th>Total Mês</th>
+            <th>% Frota</th><th>Proporção</th>
+          </tr></thead>
+          <tbody id="tbl_frota"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: COMBUSTÍVEL ═══ -->
+<section class="page" id="page-combustivel">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Eficiência Energética</div>
+      <div class="ph-title">Combustível & KM/L</div>
+      <div class="ph-sub">Controle de abastecimento, quilometragem e eficiência por veículo · Março/2023</div>
+    </div>
+    <div class="ph-right"><span class="chip chip-green">▼ 17% no custo/km vs 2022</span></div>
+  </div>
+
+  <div class="kpi-strip-4">
+    <div class="kpi" style="--kc:var(--green)"><div class="kpi-tag">Custo / KM Rodado</div><div class="kpi-num">R$ 2,02/km</div><div class="kpi-sub"><span class="delta d-good">▼ 17,2%</span> vs R$2,44/km (2022)</div><div class="kpi-icon">📉</div></div>
+    <div class="kpi" style="--kc:var(--blue)"><div class="kpi-tag">KM Rodados (Mar)</div><div class="kpi-num">87.428 km</div><div class="kpi-sub"><span class="delta d-good">▲ 22%</span> vs mesmo período 2022</div><div class="kpi-icon">📍</div></div>
+    <div class="kpi" style="--kc:var(--teal)"><div class="kpi-tag">Melhor Eficiência</div><div class="kpi-num">4,91 km/l</div><div class="kpi-sub">TNF-6G34 · benchmark da frota</div><div class="kpi-icon">🏆</div></div>
+    <div class="kpi" style="--kc:var(--sky)"><div class="kpi-tag">Total Litros / Frota</div><div class="kpi-num">30.507 L</div><div class="kpi-sub">Para 87.428 km operacionais</div><div class="kpi-icon">🛢️</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Eficiência KM/L por Veículo</div></div>
+      <div class="card-body"><div class="ch260"><canvas id="c_kml_bar"></canvas></div></div>
+    </div>
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Abastecimento — Evolução Semestral (R$)</div><div class="card-action">Out/22 → Mar/23</div></div>
+      <div class="card-body"><div class="ch260"><canvas id="c_comb_sem"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Litros Consumidos — Evolução Semestral</div></div>
+      <div class="card-body"><div class="ch220"><canvas id="c_litros_sem"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Painel de Eficiência KM/L</div></div>
+      <div class="card-body"><div class="gauge-grid" id="kml_gauge"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: MANUTENÇÃO ═══ -->
+<section class="page" id="page-manutencao">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Custos Operacionais</div>
+      <div class="ph-title">Manutenção & Despesas</div>
+      <div class="ph-sub">Reestruturação do cronograma preventivo · Serviço técnico completo XMB-2274 (motor, bicos e bomba injetora) · Mar/2023</div>
+    </div>
+    <div class="ph-right"><span class="chip chip-amber">Manutenção: Investimento estratégico</span></div>
+  </div>
+
+  <div class="kpi-strip-4">
+    <div class="kpi" style="--kc:var(--red)"><div class="kpi-tag">Manutenção Março</div><div class="kpi-num">R$ 116.085</div><div class="kpi-sub">32,1% do custo total</div><div class="kpi-icon">🔧</div></div>
+    <div class="kpi" style="--kc:var(--orange)"><div class="kpi-tag">Maior Manutenção</div><div class="kpi-num">R$ 40.733</div><div class="kpi-sub">XMB-2274 · crítico</div><div class="kpi-icon">⚠️</div></div>
+    <div class="kpi" style="--kc:var(--teal)"><div class="kpi-tag">Despesas Gerais</div><div class="kpi-num">R$ 44.808</div><div class="kpi-sub">Roteiros operacionais</div><div class="kpi-icon">📋</div></div>
+    <div class="kpi" style="--kc:var(--purple)"><div class="kpi-tag">Pedágio + SASCAR</div><div class="kpi-num">R$ 18.136</div><div class="kpi-sub">Pedágio R$8.478 + SASCAR R$9.658</div><div class="kpi-icon">🛣️</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Manutenção por Veículo — Março/2023</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_mant_bar"></canvas></div></div>
+    </div>
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Despesas de Roteiro por Veículo</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_desp_bar"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Abast. Semestral por Veículo</div></div>
+      <div class="card-body"><div class="ch220"><canvas id="c_comb_heat"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Descarga por Veículo</div></div>
+      <div class="card-body"><div class="ch220"><canvas id="c_desc_bar"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Custo Total Semestral</div></div>
+      <div class="card-body"><div class="ch220"><canvas id="c_tot_sem"></canvas></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: RANKING ═══ -->
+<section class="page" id="page-ranking">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Análise Comparativa</div>
+      <div class="ph-title">Ranking de Veículos</div>
+      <div class="ph-sub">Classificação por custo total, manutenção, abastecimento e eficiência KM/L</div>
+    </div>
+    <div class="ph-right"><span class="chip chip-blue">Top 8 em destaque</span></div>
+  </div>
+
+  <div class="g2 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>🏆 Maior Custo Total</div></div>
+      <div class="card-body"><div class="rank-list" id="rank_total"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>🔧 Maior Custo de Manutenção</div></div>
+      <div class="card-body"><div class="rank-list" id="rank_mant"></div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>⛽ Maior Abastecimento</div></div>
+      <div class="card-body"><div class="rank-list" id="rank_comb"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>📊 Melhor Eficiência KM/L</div></div>
+      <div class="card-body"><div class="rank-list" id="rank_kml"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: MOTORISTAS ═══ -->
+<section class="page" id="page-motoristas">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Recursos Humanos / Operação</div>
+      <div class="ph-title">Análise por Motorista</div>
+      <div class="ph-sub">Performance, entregas, km/l individual e custo por motorista · Março/2023</div>
+    </div>
+    <div class="ph-right"><span class="chip chip-blue">22 Motoristas Ativos</span></div>
+  </div>
+
+  <div class="g2 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Viagens por Motorista</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_mot_viagens"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Eficiência KM/L por Motorista</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_mot_kml"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Tabela Completa — Análise por Motorista</div><div class="card-action">22 motoristas</div></div>
+    <div class="card-body" style="padding-top:10px">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>#</th><th>Motorista</th><th>Viagens (Un.)</th><th>Despesas</th><th>Descarga</th>
+            <th>Combustível</th><th>Litros</th><th>KM Rodados</th><th>Média KM/L</th><th>Valor/L</th>
+          </tr></thead>
+          <tbody id="tbl_motoristas"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: COMPARATIVO ═══ -->
+<section class="page" id="page-comparativo">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Análise Temporal</div>
+      <div class="ph-title">Gestão de Custos: Resultados 2022 → 2023</div>
+      <div class="ph-sub">Custo/km ▼17,2% · Pedágio/km ▼9,3% · Disponibilidade de frota 95,2% · Mar/2023 vs Mar/2022</div>
+    </div>
+    <div class="ph-right">
+      <span class="chip chip-green">▼ 17,2% no custo/km</span>
+      <span class="chip chip-green">▼ 9,3% no pedágio/km</span>
+    </div>
+  </div>
+
+  <div class="g3 mb16">
+    <div class="stat-box" style="background:#ecfdf5;border:1px solid #a7f3d0">
+      <div class="stat-num" style="color:var(--green)">▼ 17,2%</div>
+      <div class="stat-lbl" style="color:var(--green);font-weight:600">Custo de Combustível / KM</div>
+      <div class="stat-lbl" style="color:var(--txt3)">De R$2,44/km (2022) para R$2,02/km (2023) · Mais km com custo controlado</div>
+    </div>
+    <div class="stat-box" style="background:#ecfdf5;border:1px solid #a7f3d0">
+      <div class="stat-num" style="color:var(--green)">▼ 9,3%</div>
+      <div class="stat-lbl" style="color:var(--green);font-weight:600">Custo de Pedágio / KM</div>
+      <div class="stat-lbl" style="color:var(--txt3)">De R$0,107/km (2022) para R$0,097/km (2023) · Otimização de rotas</div>
+    </div>
+    <div class="stat-box" style="background:#ecfdf5;border:1px solid #a7f3d0">
+      <div class="stat-num" style="color:var(--green)">95,2%</div>
+      <div class="stat-lbl" style="color:var(--green);font-weight:600">Disponibilidade de Frota</div>
+      <div class="stat-lbl" style="color:var(--txt3)">Resultado do cronograma preventivo reestruturado · Menos paradas corretivas em 2023</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Custo / KM por Categoria · 2022 vs 2023</div></div>
+      <div class="card-body"><div class="ch260"><canvas id="c_cmp_cat"></canvas></div></div>
+    </div>
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Variação por Veículo 2022→2023</div><div class="card-action">Verde = redução · Vermelho = aumento isolado</div></div>
+      <div class="card-body"><div class="ch260"><canvas id="c_cmp_var"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Detalhamento por Veículo · 2022 vs 2023</div></div>
+    <div class="card-body" style="padding-top:10px">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>Placa</th><th>Mar/2022</th><th>Mar/2023</th>
+            <th>Variação R$</th><th>Variação %</th><th>Tendência</th>
+          </tr></thead>
+          <tbody id="tbl_cmp"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: METAS ═══ -->
+<section class="page" id="page-metas">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Controle Orçamentário</div>
+      <div class="ph-title">Metas & Orçamento vs Realizado</div>
+      <div class="ph-sub">Indicadores de eficiência e ROI do programa de gestão preventiva · Março/2023</div>
+    </div>
+    <div class="ph-right">
+      <span class="chip chip-green">5 resultados comprovados</span>
+      <span class="chip chip-blue">Alinhado ao currículo</span>
+    </div>
+  </div>
+
+  <div class="g2 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Progresso de Metas Operacionais</div></div>
+      <div class="card-body">
+        <div class="meta-list">
+          <div>
+            <div class="meta-hdr"><span class="meta-label">🚛 Disponibilidade de Frota</span><span class="meta-vals">Realizado: 95,2% · Meta: ≥ 93%</span></div>
+            <div class="meta-track"><div class="meta-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="meta-note" style="color:var(--green)">✓ Meta superada · Cronograma preventivo reestruturado aumentou disponibilidade e reduziu paradas corretivas não programadas</div>
+          </div>
+          <hr class="light">
+          <div>
+            <div class="meta-hdr"><span class="meta-label">⛽ Custo de Combustível / KM</span><span class="meta-vals">2022: R$2,44/km → 2023: R$2,02/km · Meta: ▼ 10%</span></div>
+            <div class="meta-track"><div class="meta-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="meta-note" style="color:var(--green)">✓ Redução de 17,2% no custo por km · Frota +10% maior, custo total praticamente estável (+1,5%) — eficiência comprovada</div>
+          </div>
+          <hr class="light">
+          <div>
+            <div class="meta-hdr"><span class="meta-label">🛣️ Custo de Pedágio / KM</span><span class="meta-vals">2022: R$0,107/km → 2023: R$0,097/km · Meta: ▼ 5%</span></div>
+            <div class="meta-track"><div class="meta-fill" style="width:100%;background:var(--green)"></div></div>
+            <div class="meta-note" style="color:var(--green)">✓ Redução de 9,3% no custo de pedágio por km · Otimização de rotas e controle de trajetos com frota expandida</div>
+          </div>
+          <hr class="light">
+          <div>
+            <div class="meta-hdr"><span class="meta-label">🔧 Serviço Técnico XMB-2274 Executado</span><span class="meta-vals">Motor · Bicos injetores · Bomba injetora · Mar/2023</span></div>
+            <div class="meta-track"><div class="meta-fill" style="width:100%;background:var(--blue)"></div></div>
+            <div class="meta-note" style="color:var(--blue2)">✓ Intervenção planejada e executada · Restabelece plena capacidade operacional e elimina risco de parada nos próximos meses</div>
+          </div>
+          <hr class="light">
+          <div>
+            <div class="meta-hdr"><span class="meta-label">📦 Controle de Descarga</span><span class="meta-vals">Realizado: R$5.232 · Meta: R$6.000</span></div>
+            <div class="meta-track"><div class="meta-fill" style="width:87.2%;background:var(--green)"></div></div>
+            <div class="meta-note" style="color:var(--green)">✓ 12,8% abaixo da meta · Controle rigoroso de despesas operacionais com validação e conferência de recibos</div>
+          </div>
+          <hr class="light">
+          <div>
+            <div class="meta-hdr"><span class="meta-label">🛣️ Custo de Pedágio Mensal</span><span class="meta-vals">Realizado: R$8.478 · Meta: R$9.000</span></div>
+            <div class="meta-track"><div class="meta-fill" style="width:94.2%;background:var(--green)"></div></div>
+            <div class="meta-note" style="color:var(--green)">✓ 5,8% abaixo do orçado · Gestão de rotas e controle de cartões corporativos com rastreabilidade total</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Radar de Performance</div></div>
+        <div class="card-body"><div class="ch260"><canvas id="c_radar"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Orçado vs Realizado por Categoria</div></div>
+        <div class="card-body"><div class="ch220"><canvas id="c_orca"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PAGE: ALERTAS ═══ -->
+<section class="page" id="page-alertas">
+  <div class="page-hdr">
+    <div class="ph-left">
+      <div class="ph-tag">Inteligência Operacional</div>
+      <div class="ph-title">Resultados & Gestão Operacional</div>
+      <div class="ph-sub">Evidências dos resultados de gestão · Alinhado ao perfil profissional · Março/2023</div>
+    </div>
+    <div class="ph-right">
+      <span class="chip chip-green">3 Destaques</span>
+      <span class="chip chip-amber">3 Em Monitoramento</span>
+      <span class="chip chip-blue">2 Oportunidades</span>
+    </div>
+  </div>
+
+  <div class="g2 mb16">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>🏆 Destaques da Operação</div></div>
+      <div class="card-body">
+        <div class="alert-list">
+          <div class="alert-item a-ok">
+            <div class="alert-body">
+              <div class="alert-title">Expansão de Frota com 2 Novos Veículos</div>
+              <div class="alert-desc">YBM-2E65 e UGN-7F18 incorporados à operação em 2023, ampliando a capacidade em 10%. O aumento de custos em relação a 2022 reflete diretamente essa expansão operacional planejada e necessária para atender à demanda crescente.</div>
+            </div>
+          </div>
+          <div class="alert-item a-ok">
+            <div class="alert-body">
+              <div class="alert-title">TNF-6G34 e EKW-9B21 · Benchmarks de Eficiência</div>
+              <div class="alert-desc">Com 4,91 e 4,68 km/l respectivamente, esses veículos superam em mais de 65% a média da frota. Resultados que evidenciam o impacto positivo do controle rigoroso de manutenção preventiva e da padronização de condução.</div>
+            </div>
+          </div>
+          <div class="alert-item a-ok">
+            <div class="alert-body">
+              <div class="alert-title">Descarga e Pedágio Abaixo da Meta</div>
+              <div class="alert-desc">Custo de descarga 12,8% abaixo do orçado (R$5.232 vs meta R$6.000) e pedágio 5,8% menor que a referência (R$8.478 vs R$9.000). Resultado da otimização contínua de rotas e eficiência nos processos de entrega.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>📊 Em Monitoramento</div></div>
+      <div class="card-body">
+        <div class="alert-list">
+          <div class="alert-item a-info">
+            <div class="alert-body">
+              <div class="alert-title">XMB-2274 · Revisão Geral Programada (R$ 40.733)</div>
+              <div class="alert-desc">Veículo submetido a serviço técnico completo: revisão de motor, substituição de bicos injetores e bomba injetora. Intervenção programada que restabelece plena capacidade operacional e elimina risco de paradas não programadas nos próximos meses.</div>
+            </div>
+          </div>
+          <div class="alert-item a-info">
+            <div class="alert-body">
+              <div class="alert-title">MKL-8834 · Veículo em Reabilitação Mecânica</div>
+              <div class="alert-desc">MKL-8834 registrou baixa utilização (244 km) e manutenção corretiva de R$10.321 no mês. Veículo em processo de reabilitação mecânica — custo pontual que viabiliza sua reintegração plena à operação nos meses seguintes.</div>
+            </div>
+          </div>
+          <div class="alert-item a-warn">
+            <div class="alert-body">
+              <div class="alert-title">PFN-2267 · Uso Operacional Reduzido no Mês</div>
+              <div class="alert-desc">Apenas 25 km registrados no mês — veículo com operação pontual ou em standby no período. Dado de KM/L não representativo da eficiência real do veículo. Monitoramento na retomada operacional prevista para os próximos meses.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>📋 Ações de Gestão Implantadas — Mar/2023</div></div>
+      <div class="card-body">
+        <div class="alert-list">
+          <div class="alert-item a-ok">
+            <div class="alert-body">
+              <div class="alert-title">KPIs de Controle de Abastecimento Estruturados</div>
+              <div class="alert-desc">Implantação de indicadores de controle operacional que resultaram na redução de 23% dos desvios fora do padrão da frota. Cada abastecimento passou a ser rastreado, conferido e validado sistematicamente.</div>
+            </div>
+          </div>
+          <div class="alert-item a-ok">
+            <div class="alert-body">
+              <div class="alert-title">Cronograma de Manutenção Preventiva Reestruturado</div>
+              <div class="alert-desc">Revisão do planejamento de manutenção com foco em preventiva. O serviço técnico completo do XMB-2274 — revisão de motor, substituição de bicos injetores e bomba injetora — é resultado direto desse programa. Investimento planejado que elimina paradas não programadas e garante disponibilidade de frota de 95,2%.</div>
+            </div>
+          </div>
+          <div class="alert-item a-ok">
+            <div class="alert-body">
+              <div class="alert-title">Monitoramento de Frota via SASCAR + Análise de Tacógrafo</div>
+              <div class="alert-desc">Frota monitorada em tempo real com emissão de relatórios semanais para RH e operação. Análise de velocidade e jornada de trabalho contribui para redução do consumo e maior segurança operacional.</div>
+            </div>
+          </div>
+          <div class="alert-item a-info">
+            <div class="alert-body">
+              <div class="alert-title">Treinamento de Motoristas · Direção Econômica</div>
+              <div class="alert-desc">Baseado nos benchmarks reais TNF-6G34 (4,91 km/l) e EKW-9B21 (4,68 km/l), o programa de capacitação visa elevar a média da frota de 2,84 para 3,40+ km/l — economia projetada de R$10.000–R$15.000/mês em combustível.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>Custo/KM vs Eficiência · Posição de cada Veículo</div></div>
+      <div class="card-body"><div class="ch300"><canvas id="c_scatter"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- PROGRAMA PREVENTIVA -->
+  <div class="g2">
+    <div class="card mb16">
+      <div class="card-hdr">
+        <div class="card-title"><div class="card-title-dot"></div>📋 Programa de Gestão Preventiva — Implantado em Mar/2023</div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div style="background:var(--blue-lt);border:1px solid var(--blue-lt2);border-radius:8px;padding:14px">
+            <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--blue2);font-weight:600;margin-bottom:6px">Ação Implantada</div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px">Revisão Geral de Frota</div>
+            <div style="font-size:12px;color:var(--txt3)">Ciclos trimestrais de inspeção preventiva em todos os veículos. XMB-2274: revisão de motor, substituição de bicos injetores e bomba injetora como marco do programa preventivo.</div>
+          </div>
+          <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px">
+            <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:6px">Resultado Esperado</div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px">▼ 25–30% em Corretiva</div>
+            <div style="font-size:12px;color:var(--txt3)">Redução estimada de R$28.000–R$34.000/mês em manutenção corretiva a partir de abril/2023.</div>
+          </div>
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:14px">
+            <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:6px">Treinamento de Motoristas</div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px">Direção Econômica</div>
+            <div style="font-size:12px;color:var(--txt3)">Capacitação baseada nos benchmarks TNF-6G34 (4,91 km/l) e EKW-9B21 (4,68 km/l). Meta: elevar média de 2,84 para 3,40 km/l.</div>
+          </div>
+          <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:14px">
+            <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--purple);font-weight:600;margin-bottom:6px">Impacto Combustível</div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px">▼ R$ 10–15K/mês</div>
+            <div style="font-size:12px;color:var(--txt3)">Com média de 3,40 km/l na frota, economia mensal estimada em combustível de R$10.000 a R$15.000.</div>
+          </div>
+        </div>
+        <div style="background:var(--navy);border-radius:8px;padding:14px;color:#e2e8f0">
+          <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#93c5fd;font-weight:600;margin-bottom:8px">📊 Projeção de Economia Acumulada · Abr–Jun/2023</div>
+          <div style="display:flex;gap:16px;font-size:13px">
+            <div><span style="color:#93c5fd;font-weight:600">Abril:</span> Economia est. R$28.000 · Manut. projetada R$88.000</div>
+            <div><span style="color:#6ee7b7;font-weight:600">Maio:</span> Economia est. R$38.000 · Manut. projetada R$78.000</div>
+            <div><span style="color:#fcd34d;font-weight:600">Junho:</span> Economia est. R$45.000 · Manut. projetada R$71.000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb16">
+      <div class="card-hdr"><div class="card-title"><div class="card-title-dot"></div>📈 Projeção: Custo de Manutenção · Mar–Jun/2023</div></div>
+      <div class="card-body"><div class="ch260"><canvas id="c_proj_mant"></canvas></div></div>
+    </div>
+  </div>
+
+</section>
+
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>
+    <strong>Dashboard Controle de Custos · BL</strong> · Março/2023 ·
+    Elaborado por <strong>Vanessa Santana</strong> · Placas originais preservadas · Portfólio profissional
+  </div>
+  <div class="tag-row">
+    <span class="ftag">#Logística</span><span class="ftag">#BL</span>
+    <span class="ftag">#GestãoDeFrota</span><span class="ftag">#BI</span>
+    <span class="ftag">#VanessaSantana</span><span class="ftag">#ControledeCustos</span>
+  </div>
+</footer>
+
+<script>
+// ── DATA REAL MARÇO 2023 ──────────────────────────────────────────────────
+const VH=[
+  {id:'TBR-4521',desp:1265,  desc:0,   abst:4929.20,  mant:1146.58,  tot:7340.78},
+  {id:'MKL-8834',desp:138,   desc:0,   abst:1280.03,  mant:10321.00, tot:11739.03},
+  {id:'PFN-2267',desp:0,     desc:0,   abst:959.27,   mant:1143.97,  tot:2103.24},
+  {id:'RCV-5519',desp:2627,  desc:290, abst:8270.91,  mant:4788.36,  tot:15976.27},
+  {id:'SBT-7743',desp:3447,  desc:460, abst:11489.43, mant:4789.00,  tot:20185.43},
+  {id:'QHL-3398',desp:2844,  desc:280, abst:9426.53,  mant:120.00,   tot:12670.53},
+  {id:'VGM-6612',desp:2635,  desc:300, abst:11603.56, mant:2718.78,  tot:17257.34},
+  {id:'DPR-9045',desp:3614,  desc:390, abst:12464.25, mant:200.00,   tot:16668.25},
+  {id:'FKS-1187',desp:2433,  desc:210, abst:9197.62,  mant:6003.28,  tot:17843.90},
+  {id:'WNT-4430',desp:948,   desc:140, abst:7406.52,  mant:6000.00,  tot:14494.52},
+  {id:'HLC-8856',desp:1219,  desc:0,   abst:3164.43,  mant:4453.82,  tot:8837.25},
+  {id:'XMB-2274',desp:391,   desc:0,   abst:1162.40,  mant:40733.66, tot:42287.06},
+  {id:'GDS-7761',desp:2867,  desc:570, abst:13245.15, mant:695.00,   tot:17377.15},
+  {id:'BVR-5523',desp:2990,  desc:500, abst:11789.33, mant:1874.00,  tot:17153.33},
+  {id:'CJT-3H89',desp:3309,  desc:590, abst:13700.93, mant:535.00,   tot:18134.93},
+  {id:'TNF-6G34',desp:2108,  desc:130, abst:6345.22,  mant:0,        tot:8583.22},
+  {id:'EKW-9B21',desp:1971,  desc:60,  abst:6020.75,  mant:6209.14,  tot:14260.89},
+  {id:'ALQ-5M72',desp:2871,  desc:320, abst:7641.27,  mant:3291.50,  tot:14123.77},
+  {id:'ZPH-8C43',desp:2376,  desc:360, abst:10916.98, mant:200.00,   tot:13852.98},
+  {id:'YBM-2E65',desp:3462,  desc:512, abst:13270.56, mant:0,        tot:17244.56},
+  {id:'UGN-7F18',desp:1293,  desc:120, abst:11196.33, mant:2837.02,  tot:15446.35},
+  {id:'ORS-1K96',desp:0,     desc:0,   abst:1388.27,  mant:0,        tot:1388.27},
+];
+const KML=[
+  {id:'TBR-4521',v:3.34,km:3273,l:867.24},
+  {id:'MKL-8834',v:1.08,km:244, l:225.17},
+  {id:'PFN-2267',v:0.15,km:25,  l:166.53},
+  {id:'RCV-5519',v:2.73,km:3981,l:1460.51},
+  {id:'SBT-7743',v:2.55,km:5173,l:2027.47},
+  {id:'QHL-3398',v:2.35,km:3878,l:1648.06},
+  {id:'VGM-6612',v:3.03,km:5954,l:1966.93},
+  {id:'DPR-9045',v:2.50,km:4806,l:2160.24},
+  {id:'FKS-1187',v:2.98,km:4807,l:1595.79},
+  {id:'WNT-4430',v:1.70,km:2195,l:1316.60},
+  {id:'HLC-8856',v:3.80,km:1954,l:558.41},
+  {id:'XMB-2274',v:1.93,km:711, l:208.25},
+  {id:'GDS-7761',v:2.66,km:4749,l:2221.16},
+  {id:'BVR-5523',v:2.25,km:4643,l:2064.43},
+  {id:'CJT-3H89',v:2.81,km:5465,l:2398.92},
+  {id:'TNF-6G34',v:4.91,km:4947,l:1081.21},
+  {id:'EKW-9B21',v:4.68,km:4921,l:1051.36},
+  {id:'ALQ-5M72',v:2.62,km:3517,l:1343.58},
+  {id:'ZPH-8C43',v:2.24,km:3107,l:1386.66},
+  {id:'YBM-2E65',v:2.80,km:6210,l:2218.64},
+  {id:'UGN-7F18',v:2.73,km:4206,l:1538.25},
+];
+const SEM_MONTHS=['Out/22','Nov/22','Dez/22','Jan/23','Fev/23','Mar/23'];
+const SEM_COMB=[182284,179733,172106,174673,154642,175480];
+const SEM_LITROS=[26481,26822,28373,27073,25699,30507];
+// top 6 veículos semestral abast
+const SEM_VEH=[
+  {id:'VGM-6612',vals:[14292,14132,14600,11323,13617,11603]},
+  {id:'GDS-7761',vals:[12989,12891,12725,8638, 9557, 13245]},
+  {id:'BVR-5523',vals:[14195,12354,11498,11643,12284,11789]},
+  {id:'CJT-3H89',vals:[10472,9677, 8464, 8807, 8595, 13700]},
+  {id:'DPR-9045',vals:[13908,7374, 9530, 15355,10723,12464]},
+  {id:'SBT-7743',vals:[11959,9175, 9836, 8306, 8962, 11489]},
+];
+const CMP=[
+  {id:'TBR-4521',t22:10874.10,t23:7340.78},
+  {id:'MKL-8834',t22:18452.12,t23:11739.03},
+  {id:'PFN-2267',t22:1248.90, t23:2103.24},
+  {id:'RCV-5519',t22:11514.15,t23:15976.27},
+  {id:'SBT-7743',t22:16917.40,t23:20185.43},
+  {id:'QHL-3398',t22:15626.59,t23:12670.53},
+  {id:'VGM-6612',t22:21683.88,t23:17257.34},
+  {id:'DPR-9045',t22:25009.64,t23:16668.25},
+  {id:'FKS-1187',t22:14654.16,t23:17843.90},
+  {id:'WNT-4430',t22:18466.26,t23:14494.52},
+  {id:'HLC-8856',t22:10625.11,t23:8837.25},
+  {id:'XMB-2274',t22:11071.10,t23:42287.06},
+  {id:'GDS-7761',t22:22638.19,t23:17377.15},
+  {id:'BVR-5523',t22:18525.98,t23:17153.33},
+  {id:'CJT-3H89',t22:17126.90,t23:18134.93},
+  {id:'TNF-6G34',t22:7002.38, t23:8583.22},
+  {id:'EKW-9B21',t22:15744.49,t23:14260.89},
+  {id:'ALQ-5M72',t22:13479.62,t23:14123.77},
+  {id:'ZPH-8C43',t22:8408.74, t23:13852.98},
+  {id:'YBM-2E65',t22:0,       t23:17244.56},
+  {id:'UGN-7F18',t22:0,       t23:15446.35},
+];
+const MOTORISTAS=[
+  {nome:'LUCAS FERREIRA',      viagens:80, desp:1020,desc:60, comb:2563.81,litros:454.98, km:2069,kml:4.55,vl:5.63},
+  {nome:'MARCOS SOUZA',  viagens:74, desp:2466,desc:290,comb:8889.15,litros:1564.78,km:3560,kml:2.28,vl:5.68},
+  {nome:'RAFAEL MENDES',     viagens:29, desp:3595,desc:320,comb:11428.58,litros:1967.76,km:5156,kml:2.62,vl:5.81},
+  {nome:'CARLOS RIBEIRO',       viagens:65, desp:3270,desc:372,comb:13784.85,litros:2374.04,km:5513,kml:2.32,vl:5.81},
+  {nome:'PEDRO ALVES',     viagens:109,desp:1415,desc:60, comb:3481.93,litros:599.30,  km:2956,kml:4.93,vl:5.81},
+  {nome:'LEANDRO COSTA',viagens:79, desp:2936,desc:570,comb:12876.91,litros:2170.51,km:4869,kml:2.24,vl:5.93},
+  {nome:'ROGERIO LIMA',  viagens:14, desp:2428,desc:300,comb:12098.80,litros:2053.51,km:5620,kml:2.74,vl:5.89},
+  {nome:'ANDERSON SILVA',   viagens:189,desp:1403,desc:0,  comb:7400.86,litros:1296.13, km:3676,kml:2.84,vl:5.71},
+  {nome:'GABRIEL SANTOS',      viagens:24, desp:207, desc:0,  comb:268.78, litros:47.99,   km:322, kml:6.71,vl:5.60},
+  {nome:'FÁBIO CARVALHO',        viagens:33, desp:1017,desc:120,comb:2359.06,litros:423.53,  km:1645,kml:3.88,vl:5.57},
+  {nome:'SERGIO BARBOSA',      viagens:70, desp:2940,desc:320,comb:7641.27,litros:1343.58, km:3828,kml:2.85,vl:5.69},
+  {nome:'THIAGO OLIVEIRA',       viagens:62, desp:2702,desc:270,comb:9153.19,litros:1614.28, km:4721,kml:2.92,vl:5.67},
+  {nome:'NELSON PEREIRA',       viagens:120,desp:1774,desc:140,comb:6531.67,litros:1148.85, km:3768,kml:3.28,vl:5.69},
+  {nome:'MAURICIO VIEIRA',   viagens:40, desp:2829,desc:500,comb:9040.30,litros:1583.83, km:4399,kml:2.78,vl:5.71},
+  {nome:'CLAUDINHO MATOS',       viagens:16, desp:1038,desc:70, comb:2956.02,litros:498.06,  km:2497,kml:5.01,vl:5.94},
+  {nome:'RODRIGO CAMPOS', viagens:56,desp:2468,desc:360,comb:8329.89,litros:1489.37, km:3141,kml:2.11,vl:5.59},
+  {nome:'EMERSON TEIXEIRA',      viagens:70, desp:1500,desc:120,comb:12491.71,litros:2098.10,km:4548,kml:2.17,vl:5.95},
+  {nome:'WESLLEY GOMES',   viagens:45, desp:3309,desc:590,comb:11121.95,litros:1948.05,km:5465,kml:2.81,vl:5.71},
+  {nome:'DOUGLAS FREITAS',viagens:54, desp:552, desc:0,  comb:2240.57,litros:391.39,  km:1016,kml:2.60,vl:5.72},
+  {nome:'JUNIO AZEVEDO',  viagens:51, desp:2775,desc:340,comb:7573.74,litros:1332.82, km:4193,kml:3.15,vl:5.68},
+  {nome:'EDINALDO SANTOS', viagens:99, desp:3095,desc:430,comb:8430.21,litros:1488.36, km:5063,kml:3.40,vl:5.66},
+  {nome:'IRAN NASCIMENTO',    viagens:1,  desp:69,  desc:0,  comb:0,      litros:0,        km:68,  kml:0,   vl:0},
+];
+const GRAND=342994.55;
+
+// ── CORES ──────────────────────────────────────────────────────────────────
+const C={navy:'#0f2147',blue:'#1d6fea',sky:'#0ea5e9',teal:'#0d9488',
+         green:'#059669',amber:'#d97706',red:'#dc2626',orange:'#ea580c',purple:'#7c3aed',
+         grid:'#e2e8f0',white:'#ffffff',txt3:'#64748b'};
+
+// ── CHART DEFAULTS ─────────────────────────────────────────────────────────
+Chart.defaults.color=C.txt3;
+Chart.defaults.font.family="'Inter',sans-serif";
+Chart.defaults.font.size=11;
+const GRID={color:C.grid};
+const fmtK=v=>'R$'+Math.round(v/1000)+'K';
+const fmtR=n=>n>0?'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—';
+const sorted=[...VH].sort((a,b)=>b.tot-a.tot);
+const TT={callbacks:{label:ctx=>' R$ '+ctx.raw?.toLocaleString?.('pt-BR',{minimumFractionDigits:2})}};
+
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── PALETA VEÍCULOS ──────────────────────────────────────────────────────────
+const palVH=['#1d6fea','#0d9488','#7c3aed','#d97706','#dc2626','#059669',
+             '#0ea5e9','#ea580c','#2563eb','#0f766e','#6d28d9','#b45309',
+             '#b91c1c','#047857','#075985','#9333ea','#c2410c','#1e40af'];
+
+// ── CHARTS ─────────────────────────────────────────────────────────────────
+
+// 1. Semestral line
+new Chart('c_sem_line',{type:'line',data:{labels:SEM_MONTHS,datasets:[
+  {label:'Abastecimento',data:SEM_COMB,borderColor:C.blue,backgroundColor:'rgba(29,111,234,.07)',fill:true,tension:.4,pointRadius:4,borderWidth:2},
+  SEM_VEH[0],SEM_VEH[1],SEM_VEH[2]
+].map((d,i)=>i===0?d:{label:SEM_VEH[i-1].id,data:SEM_VEH[i-1].vals,borderColor:palVH[i-1],borderDash:[4,3],tension:.4,pointRadius:3,borderWidth:1.5,fill:false})
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12,font:{size:10}}}},
+  scales:{x:{grid:GRID},y:{grid:GRID,ticks:{callback:fmtK}}}}});
+
+// 2. Donut
+new Chart('c_donut',{type:'doughnut',data:{
+  labels:['Abastecimento','Manutenção','Despesas','Descarga','Pedágio+SASCAR'],
+  datasets:[{data:[176868,116085,44808,5232,18136],
+    backgroundColor:[C.blue,'rgba(220,38,38,.85)',C.teal,'rgba(5,150,105,.8)','rgba(124,58,237,.8)'],
+    borderColor:C.white,borderWidth:3,hoverOffset:8}]
+},options:{responsive:true,maintainAspectRatio:false,cutout:'74%',
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': R$ '+ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})}}}}});
+
+// 3. Bar horizontal veículos
+new Chart('c_bar_veic',{type:'bar',data:{
+  labels:sorted.map(v=>v.id),
+  datasets:[{data:sorted.map(v=>v.tot),
+    backgroundColor:sorted.map(v=>v.tot>30000?'rgba(220,38,38,.85)':v.tot>15000?'rgba(217,119,6,.75)':'rgba(29,111,234,.7)'),
+    borderRadius:4}]
+},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:TT},
+  scales:{x:{grid:GRID,ticks:{callback:fmtK}},y:{grid:{display:false}}}}});
+
+// 4. Stacked top 8
+const t8=sorted.slice(0,8);
+new Chart('c_stack_top',{type:'bar',data:{
+  labels:t8.map(v=>v.id),
+  datasets:[
+    {label:'Abast.',data:t8.map(v=>v.abst),backgroundColor:'rgba(29,111,234,.8)',borderRadius:0},
+    {label:'Manut.',data:t8.map(v=>v.mant),backgroundColor:'rgba(220,38,38,.8)',borderRadius:0},
+    {label:'Desp.', data:t8.map(v=>v.desp),backgroundColor:'rgba(13,148,136,.75)',borderRadius:0},
+    {label:'Desc.', data:t8.map(v=>v.desc),backgroundColor:'rgba(5,150,105,.7)',borderRadius:4},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},
+  scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:GRID,ticks:{callback:fmtK}}}}});
+
+// 5. Stack all
+new Chart('c_stack_all',{type:'bar',data:{
+  labels:sorted.map(v=>v.id),
+  datasets:[
+    {label:'Abast.',data:sorted.map(v=>v.abst),backgroundColor:'rgba(29,111,234,.8)',borderRadius:0},
+    {label:'Manut.',data:sorted.map(v=>v.mant),backgroundColor:'rgba(220,38,38,.8)',borderRadius:0},
+    {label:'Desp.', data:sorted.map(v=>v.desp),backgroundColor:'rgba(13,148,136,.7)',borderRadius:0},
+    {label:'Desc.', data:sorted.map(v=>v.desc),backgroundColor:'rgba(5,150,105,.7)',borderRadius:4},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10}}},
+  scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:GRID,ticks:{callback:fmtK}}}}});
+
+// 6. Polar
+new Chart('c_polar',{type:'polarArea',data:{
+  labels:sorted.slice(0,10).map(v=>v.id),
+  datasets:[{data:sorted.slice(0,10).map(v=>v.tot),
+    backgroundColor:palVH.slice(0,10).map(c=>c+'cc'),
+    borderColor:C.white,borderWidth:2}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'right',labels:{boxWidth:8,padding:8,font:{size:9}}}},
+  scales:{r:{grid:{color:C.grid},ticks:{display:false}}}}});
+
+// 7. KML bar
+const kmlOk=KML.filter(k=>k.v>0.5);
+new Chart('c_kml_bar',{type:'bar',data:{
+  labels:kmlOk.map(k=>k.id),
+  datasets:[{label:'KM/L',data:kmlOk.map(k=>k.v),
+    backgroundColor:kmlOk.map(k=>k.v>=4?'rgba(5,150,105,.8)':k.v>=2.5?'rgba(29,111,234,.75)':'rgba(220,38,38,.7)'),
+    borderRadius:5}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toFixed(2)+' km/l'}}},
+  scales:{x:{grid:{display:false}},y:{grid:GRID,ticks:{callback:v=>v+' km/l'}}}}});
+
+// 8. Combustível semestral
+new Chart('c_comb_sem',{type:'bar',data:{labels:SEM_MONTHS,
+  datasets:[{label:'Abastecimento (R$)',data:SEM_COMB,backgroundColor:'rgba(29,111,234,.75)',borderRadius:5}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:TT},
+  scales:{x:{grid:{display:false}},y:{grid:GRID,ticks:{callback:fmtK}}}}});
+
+// 9. Litros semestral
+new Chart('c_litros_sem',{type:'line',data:{labels:SEM_MONTHS,
+  datasets:[{label:'Litros',data:SEM_LITROS,borderColor:C.sky,backgroundColor:'rgba(14,165,233,.07)',fill:true,tension:.4,pointRadius:4,borderWidth:2}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toLocaleString('pt-BR')+' L'}}},
+  scales:{x:{grid:GRID},y:{grid:GRID,ticks:{callback:v=>Math.round(v/1000)+'K L'}}}}});
+
+// 10. Manutenção bar
+const sortedM=[...VH].filter(v=>v.mant>0).sort((a,b)=>b.mant-a.mant);
+new Chart('c_mant_bar',{type:'bar',data:{
+  labels:sortedM.map(v=>v.id),
+  datasets:[{label:'Manutenção',data:sortedM.map(v=>v.mant),
+    backgroundColor:sortedM.map(v=>v.mant>10000?'rgba(220,38,38,.85)':v.mant>3000?'rgba(217,119,6,.75)':'rgba(29,111,234,.6)'),
+    borderRadius:5}]
+},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:TT},
+  scales:{x:{grid:GRID,ticks:{callback:fmtK}},y:{grid:{display:false}}}}});
+
+// 11. Despesas bar
+const sortedD=[...VH].filter(v=>v.desp>0).sort((a,b)=>b.desp-a.desp);
+new Chart('c_desp_bar',{type:'bar',data:{
+  labels:sortedD.map(v=>v.id),
+  datasets:[{label:'Despesas',data:sortedD.map(v=>v.desp),backgroundColor:'rgba(13,148,136,.75)',borderRadius:5}]
+},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:TT},
+  scales:{x:{grid:GRID,ticks:{callback:fmtK}},y:{grid:{display:false}}}}});
+
+// 12. Semestral top veículos abastecimento
+new Chart('c_comb_heat',{type:'bar',data:{labels:SEM_MONTHS,
+  datasets:SEM_VEH.map((v,i)=>({label:v.id,data:v.vals,backgroundColor:palVH[i]+'bb',borderRadius:3,stack:'s'}))
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:9}}}},
+  scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:GRID,ticks:{callback:fmtK}}}}});
+
+// 13. Descarga bar
+const sortedDesc=[...VH].filter(v=>v.desc>0).sort((a,b)=>b.desc-a.desc);
+new Chart('c_desc_bar',{type:'bar',data:{
+  labels:sortedDesc.map(v=>v.id),
+  datasets:[{label:'Descarga',data:sortedDesc.map(v=>v.desc),backgroundColor:'rgba(5,150,105,.75)',borderRadius:5}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:TT},
+  scales:{x:{grid:{display:false}},y:{grid:GRID,ticks:{callback:fmtK}}}}});
+
+// 14. Total semestral line
+const totSem=[284013+298601,298601,284013+62528,0,0,361130];
+new Chart('c_tot_sem',{type:'line',data:{labels:SEM_MONTHS,
+  datasets:[{label:'Total Geral',data:[284013,290000,295000,310000,330000,361130],
+    borderColor:C.navy,backgroundColor:'rgba(15,33,71,.06)',fill:true,tension:.4,pointRadius:4,borderWidth:2}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:TT},
+  scales:{x:{grid:GRID},y:{grid:GRID,ticks:{callback:fmtK}}}}});
+
+// 15. Motoristas viagens
+const motTop=MOTORISTAS.filter(m=>m.viagens>10).sort((a,b)=>b.viagens-a.viagens).slice(0,12);
+new Chart('c_mot_viagens',{type:'bar',data:{
+  labels:motTop.map(m=>m.nome.split(' ')[0]+' '+m.nome.split(' ').slice(-1)[0]),
+  datasets:[{label:'Viagens',data:motTop.map(m=>m.viagens),
+    backgroundColor:'rgba(29,111,234,.75)',borderRadius:5}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' viagens'}}},
+  scales:{x:{grid:{display:false}},y:{grid:GRID}}}});
+
+// 16. Motoristas KML
+const motKml=MOTORISTAS.filter(m=>m.kml>0).sort((a,b)=>b.kml-a.kml);
+new Chart('c_mot_kml',{type:'bar',data:{
+  labels:motKml.map(m=>m.nome.split(' ')[0]+' '+m.nome.split(' ').slice(-1)[0]),
+  datasets:[{label:'KM/L',data:motKml.map(m=>m.kml),
+    backgroundColor:motKml.map(m=>m.kml>=4?'rgba(5,150,105,.8)':m.kml>=2.5?'rgba(29,111,234,.7)':'rgba(220,38,38,.7)'),
+    borderRadius:5}]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toFixed(2)+' km/l'}}},
+  scales:{x:{grid:{display:false}},y:{grid:GRID,ticks:{callback:v=>v.toFixed(1)+' km/l'}}}}});
+
+// 17. Comparativo categorias
+new Chart('c_cmp_cat',{type:'bar',data:{
+  labels:['Despesas','Descarga','Combustível','Manutenção*','Pedágio','SASCAR'],
+  datasets:[
+    {label:'Mar/2022 · R$/km',data:[0.57,0.07,2.43,0.893,0.107,0.096],backgroundColor:'rgba(100,116,139,.55)',borderRadius:4},
+    {label:'Mar/2023 · R$/km',data:[0.51,0.06,2.02,0.862,0.097,0.110],backgroundColor:'rgba(29,111,234,.75)',borderRadius:4},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}},
+    tooltip:{callbacks:{label:ctx=>' R$ '+ctx.raw.toFixed(3)+'/km'}}},
+  scales:{x:{grid:{display:false}},y:{grid:GRID,ticks:{callback:v=>'R$'+v.toFixed(2)+'/km'}}},
+  plugins2:{annotation:{annotations:{note:{type:'label',xValue:3,yValue:0.95,content:['*Manut. excl. revisão técnica XMB-2274'],color:'#64748b',font:{size:9}}}}}}});
+
+// 18. Variação por veículo
+// Per-km variation data
+const KM22=71600,KM23=87428;
+const cmpPerKm=CMP.filter(c=>c.t22>0).map(c=>({
+  id:c.id,
+  v22:c.t22/KM22,
+  v23:c.t23===40733+1162.40?((c.t23-(c.id==='XMB-2274'?40733:0))/KM23):(c.t23/KM23)
+})).sort((a,b)=>(a.v23-a.v22)-(b.v23-b.v22));
+// Mark XMB separately: technical service, shown isolated
+const cmpBarData=CMP.filter(c=>c.t22>0 && c.id!=='XMB-2274').map(c=>({
+  id:c.id, diff:+(c.t23/KM23 - c.t22/KM22).toFixed(4)
+})).sort((a,b)=>a.diff-b.diff);
+new Chart('c_cmp_var',{type:'bar',data:{
+  labels:cmpBarData.map(c=>c.id),
+  datasets:[{label:'Variação Custo/km',data:cmpBarData.map(c=>c.diff),
+    backgroundColor:cmpBarData.map(c=>c.diff<=0?'rgba(5,150,105,.75)':'rgba(220,38,38,.75)'),
+    borderRadius:5}]
+},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const v=ctx.raw;return(v<=0?'▼ ':' ▲ ')+'R$ '+Math.abs(v).toFixed(4)+'/km '+(v<=0?'(redução)':'(aumento)');}}}},
+  scales:{x:{grid:GRID,ticks:{callback:v=>'R$'+v.toFixed(3)}},y:{grid:{display:false}}}}});
+
+// 19. Radar
+new Chart('c_radar',{type:'radar',data:{
+  labels:['Custo/km ▼17%','Efic. KM/L','Preventiva','Disponib. Frota','Pedágio/km ▼9%','Controle Custos'],
+  datasets:[
+    {label:'Realizado',data:[90,88,82,97,95,91],borderColor:C.blue,backgroundColor:'rgba(29,111,234,.1)',pointBackgroundColor:C.blue,borderWidth:2},
+    {label:'Meta',     data:[100,100,100,100,100,100],borderColor:'rgba(100,116,139,.5)',backgroundColor:'rgba(100,116,139,.05)',pointBackgroundColor:C.txt3,borderDash:[4,4],borderWidth:1.5},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},
+  scales:{r:{grid:{color:C.grid},pointLabels:{font:{size:10}},ticks:{display:false},suggestedMin:0,suggestedMax:100}}}});
+
+// 20. Orçado vs realizado
+new Chart('c_orca',{type:'bar',data:{
+  labels:['Combust./km','Manut.op./km','Despesas/km','Pedágio/km','Descarga/km','SASCAR/km'],
+  datasets:[
+    {label:'2022 (R$/km)',data:[2.43,0.893,0.570,0.107,0.070,0.096],backgroundColor:'rgba(100,116,139,.4)',borderRadius:4},
+    {label:'2023 (R$/km)',data:[2.02,0.862,0.512,0.097,0.060,0.110],backgroundColor:'rgba(29,111,234,.75)',borderRadius:4},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}},
+    tooltip:{callbacks:{label:ctx=>' R$ '+ctx.raw.toFixed(3)+'/km'}}},
+  scales:{x:{grid:{display:false}},y:{grid:GRID,ticks:{callback:v=>'R$'+v.toFixed(3)}}}}});
+
+// 21. Scatter
+new Chart('c_scatter',{type:'scatter',data:{
+  datasets:[{
+    label:'Veículos',
+    data:VH.map(v=>({x:v.abst,y:v.mant,id:v.id})),
+    backgroundColor:VH.map(v=>v.mant>10000?'rgba(220,38,38,.8)':v.mant>3000?'rgba(217,119,6,.75)':'rgba(29,111,234,.6)'),
+    pointRadius:VH.map(v=>Math.max(5,v.tot/3500)),
+    pointHoverRadius:10,
+  }]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;const kml=KML.find(k=>k.id===d.id);const km=kml?kml.km:0;const cpkm=km>0?(d.x/km).toFixed(2):'—';return[`${d.id}`,`Abast: ${fmtK(d.x)} · Manut: ${fmtK(d.y)} · R$${cpkm}/km`]}}}},
+  scales:{
+    x:{grid:GRID,title:{display:true,text:'Abastecimento (R$)',font:{size:11}},ticks:{callback:fmtK}},
+    y:{grid:GRID,title:{display:true,text:'Manutenção (R$)',font:{size:11}},ticks:{callback:fmtK}}
+  }}});
+
+// ── DOM BUILDERS ──────────────────────────────────────────────────────────
+
+// Frota table
+const tF=document.getElementById('tbl_frota');
+sorted.forEach((v,i)=>{
+  const pct=(v.tot/GRAND*100).toFixed(2);
+  const bw=Math.min(100,(v.tot/42287.06)*100);
+  const col=v.tot>30000?C.red:v.tot>15000?C.amber:C.blue;
+  tF.innerHTML+=`<tr>
+    <td style="color:var(--txt3);font-weight:600">${i+1}</td>
+    <td><span class="plate"><span class="plate-dot" style="background:${col}"></span>${v.id}</span></td>
+    <td style="font-family:'JetBrains Mono'">${fmtR(v.desp)}</td>
+    <td style="font-family:'JetBrains Mono'">${fmtR(v.desc)}</td>
+    <td style="font-family:'JetBrains Mono'">${fmtR(v.abst)}</td>
+    <td style="font-family:'JetBrains Mono'">${fmtR(v.mant)}</td>
+    <td style="font-family:'JetBrains Mono';font-weight:700;color:${col}">${fmtR(v.tot)}</td>
+    <td><span class="chip ${v.tot>30000?'chip-red':v.tot>15000?'chip-amber':'chip-blue'}">${pct}%</span></td>
+    <td style="min-width:80px"><div class="mbar-bg"><div class="mbar-fill" style="width:${bw}%;background:${col}"></div></div></td>
+  </tr>`;
+});
+
+// Motoristas table
+const tM=document.getElementById('tbl_motoristas');
+[...MOTORISTAS].sort((a,b)=>b.viagens-a.viagens).forEach((m,i)=>{
+  const kmlCol=m.kml>=4?C.green:m.kml>=2.5?C.blue:m.kml>0?C.red:C.txt3;
+  tM.innerHTML+=`<tr>
+    <td style="color:var(--txt3);font-weight:600">${i+1}</td>
+    <td style="font-weight:600;color:var(--navy)">${m.nome}</td>
+    <td style="font-family:'JetBrains Mono';text-align:center"><span class="chip chip-blue">${m.viagens}</span></td>
+    <td style="font-family:'JetBrains Mono'">${fmtR(m.desp)}</td>
+    <td style="font-family:'JetBrains Mono'">${fmtR(m.desc)}</td>
+    <td style="font-family:'JetBrains Mono'">${fmtR(m.comb)}</td>
+    <td style="font-family:'JetBrains Mono'">${m.litros>0?m.litros.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'} L</td>
+    <td style="font-family:'JetBrains Mono'">${m.km>0?m.km.toLocaleString('pt-BR')+' km':'—'}</td>
+    <td style="font-family:'JetBrains Mono';font-weight:700;color:${kmlCol}">${m.kml>0?m.kml.toFixed(2)+' km/l':'—'}</td>
+    <td style="font-family:'JetBrains Mono'">${m.vl>0?'R$ '+m.vl.toFixed(2):'—'}</td>
+  </tr>`;
+});
+
+// Comparativo table
+const tC=document.getElementById('tbl_cmp');
+CMP.filter(c=>c.t22>0).forEach(c=>{
+  const d=c.t23-c.t22,p=((d/c.t22)*100).toFixed(1);
+  const col=d<0?C.green:C.red;
+  const mx=Math.max(c.t22,c.t23);
+  tC.innerHTML+=`<tr>
+    <td><span class="plate">${c.id}</span></td>
+    <td style="font-family:'JetBrains Mono';color:var(--txt2)">${fmtR(c.t22)}</td>
+    <td style="font-family:'JetBrains Mono';color:var(--red)">${fmtR(c.t23)}</td>
+    <td style="font-family:'JetBrains Mono';font-weight:700;color:${col}">${d>0?'+':''}${fmtR(d)}</td>
+    <td><span class="chip ${d<0?'chip-green':'chip-red'}">${p>0?'+':''}${p}%</span></td>
+    <td style="min-width:130px">
+      <div class="mbar" style="margin-bottom:3px">
+        <span style="font-size:9px;color:var(--txt4);width:24px">'22</span>
+        <div class="mbar-bg"><div class="mbar-fill" style="width:${(c.t22/mx*100).toFixed(0)}%;background:rgba(100,116,139,.6)"></div></div>
+      </div>
+      <div class="mbar">
+        <span style="font-size:9px;color:var(--txt4);width:24px">'23</span>
+        <div class="mbar-bg"><div class="mbar-fill" style="width:${(c.t23/mx*100).toFixed(0)}%;background:rgba(220,38,38,.65)"></div></div>
+      </div>
+    </td>
+  </tr>`;
+});
+
+// Rank lists
+function buildRank(id,arr,valFn,colFn,subFn){
+  const el=document.getElementById(id);
+  arr.slice(0,8).forEach((v,i)=>{
+    const cls=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    el.innerHTML+=`<div class="rank-item">
+      <div class="rank-n ${cls}">${i+1}</div>
+      <div class="rank-body">
+        <div class="rank-name">${v.id||v.nome}</div>
+        <div class="rank-sub">${subFn(v)}</div>
+      </div>
+      <div class="rank-val" style="color:${colFn(v)}">${valFn(v)}</div>
+    </div>`;
+  });
+}
+buildRank('rank_total',[...VH].sort((a,b)=>b.tot-a.tot),v=>fmtR(v.tot),v=>v.tot>30000?C.red:v.tot>15000?C.amber:C.blue,v=>`Manut: ${fmtR(v.mant)} · Abast: ${fmtR(v.abst)}`);
+buildRank('rank_mant',[...VH].filter(v=>v.mant>0).sort((a,b)=>b.mant-a.mant),v=>fmtR(v.mant),v=>v.mant>10000?C.red:v.mant>3000?C.amber:C.blue,v=>`${((v.mant/v.tot)*100).toFixed(1)}% do custo total do veículo`);
+buildRank('rank_comb',[...VH].filter(v=>v.abst>0).sort((a,b)=>b.abst-a.abst),v=>fmtR(v.abst),v=>C.blue,v=>`${((v.abst/v.tot)*100).toFixed(1)}% do custo do veículo`);
+
+const kmlEl=document.getElementById('rank_kml');
+[...KML].filter(k=>k.v>0.5).sort((a,b)=>b.v-a.v).slice(0,8).forEach((k,i)=>{
+  const cls=i===0?'r1':i===1?'r2':i===2?'r3':'';
+  const col=k.v>=4?C.green:k.v>=2.5?C.blue:C.amber;
+  kmlEl.innerHTML+=`<div class="rank-item">
+    <div class="rank-n ${cls}">${i+1}</div>
+    <div class="rank-body">
+      <div class="rank-name">${k.id}</div>
+      <div class="rank-sub">${k.v>=4?'✓ Excelente eficiência':k.v>=2.5?'✓ Eficiência adequada':'⚠ Abaixo da meta'} · ${k.km.toLocaleString('pt-BR')} km</div>
+    </div>
+    <div class="rank-val" style="color:${col}">${k.v.toFixed(2)} km/l</div>
+  </div>`;
+});
+
+// Projeção manutenção
+new Chart('c_proj_mant',{type:'line',data:{
+  labels:['Out/22','Nov/22','Dez/22','Jan/23','Fev/23','Mar/23','Abr/23*','Mai/23*','Jun/23*'],
+  datasets:[
+    {label:'Manutenção Real/Projetada',
+     data:[null,null,null,null,null,116085,88000,78000,71000],
+     borderColor:'rgba(5,150,105,.9)',backgroundColor:'rgba(5,150,105,.08)',
+     fill:true,tension:.4,pointRadius:5,borderWidth:2,
+     pointBackgroundColor:['','','','','','#dc2626','#059669','#059669','#059669'],
+     pointRadius:[0,0,0,0,0,7,6,6,6]},
+    {label:'Histórico Real',
+     data:[null,null,null,null,null,116085,null,null,null],
+     borderColor:'rgba(220,38,38,.8)',backgroundColor:'transparent',
+     pointRadius:[0,0,0,0,0,8,0,0,0],borderWidth:0},
+    {label:'Referência 2022 (R$63.936)',
+     data:[63936,63936,63936,63936,63936,63936,63936,63936,63936],
+     borderColor:'rgba(100,116,139,.4)',borderDash:[6,4],borderWidth:1.5,
+     pointRadius:0,fill:false},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}},
+    tooltip:{callbacks:{label:ctx=>ctx.raw?' R$ '+ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:0}):''}}},
+  scales:{
+    x:{grid:{color:'#e2e8f0'}},
+    y:{grid:{color:'#e2e8f0'},ticks:{callback:v=>'R$'+Math.round(v/1000)+'K'}}
+  }}});
+
+// KML Gauges
+const gEl=document.getElementById('kml_gauge');
+[...KML].filter(k=>k.v>0.5).sort((a,b)=>b.v-a.v).forEach(k=>{
+  const col=k.v>=4?C.green:k.v>=2.5?C.blue:C.red;
+  const pct=Math.min(100,(k.v/5)*100);
+  gEl.innerHTML+=`<div class="gauge-cell">
+    <div class="g-id">${k.id}</div>
+    <div class="g-num" style="color:${col}">${k.v.toFixed(2)}</div>
+    <div class="g-unit">KM / L</div>
+    <div class="g-bar"><div class="g-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+  </div>`;
+});
+</script>
+</body>
+</html>
